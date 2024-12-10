@@ -1,0 +1,609 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "mount_file_id": "1T7PYNgDbf2dvaLAShWslySfUHgpMM_mb",
+      "authorship_tag": "ABX9TyPhJER2iomfN9CbjhT9FUGs",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/mgurrie/BookRecSys/blob/main/BookRecSys\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "%%writefile app.py"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "RtlMPXUb7MpG",
+        "outputId": "833472d3-fee0-408f-8226-3dc1df2c6c60"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Writing app.py\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "collapsed": true,
+        "id": "cjw3lYykdBrG",
+        "outputId": "164d4c44-fa12-477d-be7f-76cabf7ed303"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: tensorflow in /usr/local/lib/python3.10/dist-packages (2.17.1)\n",
+            "Requirement already satisfied: pandas in /usr/local/lib/python3.10/dist-packages (2.2.2)\n",
+            "Requirement already satisfied: numpy in /usr/local/lib/python3.10/dist-packages (1.26.4)\n",
+            "Requirement already satisfied: scikit-learn in /usr/local/lib/python3.10/dist-packages (1.5.2)\n",
+            "Requirement already satisfied: streamlit in /usr/local/lib/python3.10/dist-packages (1.40.2)\n",
+            "Requirement already satisfied: absl-py>=1.0.0 in /usr/local/lib/python3.10/dist-packages (from tensorflow) (1.4.0)\n",
+            "Requirement already satisfied: astunparse>=1.6.0 in /usr/local/lib/python3.10/dist-packages (from tensorflow) (1.6.3)\n",
+            "Requirement already satisfied: flatbuffers>=24.3.25 in /usr/local/lib/python3.10/dist-packages (from tensorflow) (24.3.25)\n",
+            "Requirement already satisfied: gast!=0.5.0,!=0.5.1,!=0.5.2,>=0.2.1 in /usr/local/lib/python3.10/dist-packages (from tensorflow) (0.6.0)\n",
+            "Requirement already satisfied: google-pasta>=0.1.1 in /usr/local/lib/python3.10/dist-packages (from tensorflow) (0.2.0)\n",
+            "Requirement already satisfied: h5py>=3.10.0 in /usr/local/lib/python3.10/dist-packages (from tensorflow) (3.12.1)\n",
+            "Requirement already satisfied: libclang>=13.0.0 in /usr/local/lib/python3.10/dist-packages (from tensorflow) (18.1.1)\n",
+            "Requirement already satisfied: ml-dtypes<0.5.0,>=0.3.1 in /usr/local/lib/python3.10/dist-packages (from tensorflow) (0.4.1)\n",
+            "Requirement already satisfied: opt-einsum>=2.3.2 in /usr/local/lib/python3.10/dist-packages (from tensorflow) (3.4.0)\n",
+            "Requirement already satisfied: packaging in /usr/local/lib/python3.10/dist-packages (from tensorflow) (24.2)\n",
+            "Requirement already satisfied: protobuf!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,<5.0.0dev,>=3.20.3 in /usr/local/lib/python3.10/dist-packages (from tensorflow) (4.25.5)\n",
+            "Requirement already satisfied: requests<3,>=2.21.0 in /usr/local/lib/python3.10/dist-packages (from tensorflow) (2.32.3)\n",
+            "Requirement already satisfied: setuptools in /usr/local/lib/python3.10/dist-packages (from tensorflow) (75.1.0)\n",
+            "Requirement already satisfied: six>=1.12.0 in /usr/local/lib/python3.10/dist-packages (from tensorflow) (1.16.0)\n",
+            "Requirement already satisfied: termcolor>=1.1.0 in /usr/local/lib/python3.10/dist-packages (from tensorflow) (2.5.0)\n",
+            "Requirement already satisfied: typing-extensions>=3.6.6 in /usr/local/lib/python3.10/dist-packages (from tensorflow) (4.12.2)\n",
+            "Requirement already satisfied: wrapt>=1.11.0 in /usr/local/lib/python3.10/dist-packages (from tensorflow) (1.17.0)\n",
+            "Requirement already satisfied: grpcio<2.0,>=1.24.3 in /usr/local/lib/python3.10/dist-packages (from tensorflow) (1.68.1)\n",
+            "Requirement already satisfied: tensorboard<2.18,>=2.17 in /usr/local/lib/python3.10/dist-packages (from tensorflow) (2.17.1)\n",
+            "Requirement already satisfied: keras>=3.2.0 in /usr/local/lib/python3.10/dist-packages (from tensorflow) (3.5.0)\n",
+            "Requirement already satisfied: tensorflow-io-gcs-filesystem>=0.23.1 in /usr/local/lib/python3.10/dist-packages (from tensorflow) (0.37.1)\n",
+            "Requirement already satisfied: python-dateutil>=2.8.2 in /usr/local/lib/python3.10/dist-packages (from pandas) (2.8.2)\n",
+            "Requirement already satisfied: pytz>=2020.1 in /usr/local/lib/python3.10/dist-packages (from pandas) (2024.2)\n",
+            "Requirement already satisfied: tzdata>=2022.7 in /usr/local/lib/python3.10/dist-packages (from pandas) (2024.2)\n",
+            "Requirement already satisfied: scipy>=1.6.0 in /usr/local/lib/python3.10/dist-packages (from scikit-learn) (1.13.1)\n",
+            "Requirement already satisfied: joblib>=1.2.0 in /usr/local/lib/python3.10/dist-packages (from scikit-learn) (1.4.2)\n",
+            "Requirement already satisfied: threadpoolctl>=3.1.0 in /usr/local/lib/python3.10/dist-packages (from scikit-learn) (3.5.0)\n",
+            "Requirement already satisfied: altair<6,>=4.0 in /usr/local/lib/python3.10/dist-packages (from streamlit) (4.2.2)\n",
+            "Requirement already satisfied: blinker<2,>=1.0.0 in /usr/local/lib/python3.10/dist-packages (from streamlit) (1.9.0)\n",
+            "Requirement already satisfied: cachetools<6,>=4.0 in /usr/local/lib/python3.10/dist-packages (from streamlit) (5.5.0)\n",
+            "Requirement already satisfied: click<9,>=7.0 in /usr/local/lib/python3.10/dist-packages (from streamlit) (8.1.7)\n",
+            "Requirement already satisfied: pillow<12,>=7.1.0 in /usr/local/lib/python3.10/dist-packages (from streamlit) (11.0.0)\n",
+            "Requirement already satisfied: pyarrow>=7.0 in /usr/local/lib/python3.10/dist-packages (from streamlit) (17.0.0)\n",
+            "Requirement already satisfied: rich<14,>=10.14.0 in /usr/local/lib/python3.10/dist-packages (from streamlit) (13.9.4)\n",
+            "Requirement already satisfied: tenacity<10,>=8.1.0 in /usr/local/lib/python3.10/dist-packages (from streamlit) (9.0.0)\n",
+            "Requirement already satisfied: toml<2,>=0.10.1 in /usr/local/lib/python3.10/dist-packages (from streamlit) (0.10.2)\n",
+            "Requirement already satisfied: watchdog<7,>=2.1.5 in /usr/local/lib/python3.10/dist-packages (from streamlit) (6.0.0)\n",
+            "Requirement already satisfied: gitpython!=3.1.19,<4,>=3.0.7 in /usr/local/lib/python3.10/dist-packages (from streamlit) (3.1.43)\n",
+            "Requirement already satisfied: pydeck<1,>=0.8.0b4 in /usr/local/lib/python3.10/dist-packages (from streamlit) (0.9.1)\n",
+            "Requirement already satisfied: tornado<7,>=6.0.3 in /usr/local/lib/python3.10/dist-packages (from streamlit) (6.3.3)\n",
+            "Requirement already satisfied: entrypoints in /usr/local/lib/python3.10/dist-packages (from altair<6,>=4.0->streamlit) (0.4)\n",
+            "Requirement already satisfied: jinja2 in /usr/local/lib/python3.10/dist-packages (from altair<6,>=4.0->streamlit) (3.1.4)\n",
+            "Requirement already satisfied: jsonschema>=3.0 in /usr/local/lib/python3.10/dist-packages (from altair<6,>=4.0->streamlit) (4.23.0)\n",
+            "Requirement already satisfied: toolz in /usr/local/lib/python3.10/dist-packages (from altair<6,>=4.0->streamlit) (0.12.1)\n",
+            "Requirement already satisfied: wheel<1.0,>=0.23.0 in /usr/local/lib/python3.10/dist-packages (from astunparse>=1.6.0->tensorflow) (0.45.1)\n",
+            "Requirement already satisfied: gitdb<5,>=4.0.1 in /usr/local/lib/python3.10/dist-packages (from gitpython!=3.1.19,<4,>=3.0.7->streamlit) (4.0.11)\n",
+            "Requirement already satisfied: namex in /usr/local/lib/python3.10/dist-packages (from keras>=3.2.0->tensorflow) (0.0.8)\n",
+            "Requirement already satisfied: optree in /usr/local/lib/python3.10/dist-packages (from keras>=3.2.0->tensorflow) (0.13.1)\n",
+            "Requirement already satisfied: charset-normalizer<4,>=2 in /usr/local/lib/python3.10/dist-packages (from requests<3,>=2.21.0->tensorflow) (3.4.0)\n",
+            "Requirement already satisfied: idna<4,>=2.5 in /usr/local/lib/python3.10/dist-packages (from requests<3,>=2.21.0->tensorflow) (3.10)\n",
+            "Requirement already satisfied: urllib3<3,>=1.21.1 in /usr/local/lib/python3.10/dist-packages (from requests<3,>=2.21.0->tensorflow) (2.2.3)\n",
+            "Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.10/dist-packages (from requests<3,>=2.21.0->tensorflow) (2024.8.30)\n",
+            "Requirement already satisfied: markdown-it-py>=2.2.0 in /usr/local/lib/python3.10/dist-packages (from rich<14,>=10.14.0->streamlit) (3.0.0)\n",
+            "Requirement already satisfied: pygments<3.0.0,>=2.13.0 in /usr/local/lib/python3.10/dist-packages (from rich<14,>=10.14.0->streamlit) (2.18.0)\n",
+            "Requirement already satisfied: markdown>=2.6.8 in /usr/local/lib/python3.10/dist-packages (from tensorboard<2.18,>=2.17->tensorflow) (3.7)\n",
+            "Requirement already satisfied: tensorboard-data-server<0.8.0,>=0.7.0 in /usr/local/lib/python3.10/dist-packages (from tensorboard<2.18,>=2.17->tensorflow) (0.7.2)\n",
+            "Requirement already satisfied: werkzeug>=1.0.1 in /usr/local/lib/python3.10/dist-packages (from tensorboard<2.18,>=2.17->tensorflow) (3.1.3)\n",
+            "Requirement already satisfied: smmap<6,>=3.0.1 in /usr/local/lib/python3.10/dist-packages (from gitdb<5,>=4.0.1->gitpython!=3.1.19,<4,>=3.0.7->streamlit) (5.0.1)\n",
+            "Requirement already satisfied: MarkupSafe>=2.0 in /usr/local/lib/python3.10/dist-packages (from jinja2->altair<6,>=4.0->streamlit) (3.0.2)\n",
+            "Requirement already satisfied: attrs>=22.2.0 in /usr/local/lib/python3.10/dist-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (24.2.0)\n",
+            "Requirement already satisfied: jsonschema-specifications>=2023.03.6 in /usr/local/lib/python3.10/dist-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (2024.10.1)\n",
+            "Requirement already satisfied: referencing>=0.28.4 in /usr/local/lib/python3.10/dist-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (0.35.1)\n",
+            "Requirement already satisfied: rpds-py>=0.7.1 in /usr/local/lib/python3.10/dist-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (0.22.3)\n",
+            "Requirement already satisfied: mdurl~=0.1 in /usr/local/lib/python3.10/dist-packages (from markdown-it-py>=2.2.0->rich<14,>=10.14.0->streamlit) (0.1.2)\n"
+          ]
+        }
+      ],
+      "source": [
+        "!pip install tensorflow pandas numpy scikit-learn streamlit"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip install py-localtunnel"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "rjaMD8IK-gko",
+        "outputId": "f6c4db33-b833-4f2b-e05b-807df3afb027"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: py-localtunnel in /usr/local/lib/python3.10/dist-packages (1.0.3)\n",
+            "Requirement already satisfied: urllib3 in /usr/local/lib/python3.10/dist-packages (from py-localtunnel) (2.2.3)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip install pyngrok"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "SGTptpWyGtqV",
+        "outputId": "cf4e50e5-29d7-415d-f1b4-779df523eace"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: pyngrok in /usr/local/lib/python3.10/dist-packages (7.2.1)\n",
+            "Requirement already satisfied: PyYAML>=5.1 in /usr/local/lib/python3.10/dist-packages (from pyngrok) (6.0.2)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import pandas as pd\n",
+        "import seaborn as sns\n",
+        "import matplotlib.pyplot as plt\n",
+        "\n",
+        "data_books = pd.read_csv('../content/dataset/Books.csv')\n",
+        "data_books.fillna(0, inplace=True)\n",
+        "data_users = pd.read_csv('../content/dataset/Users.csv')\n",
+        "data_users.fillna(0, inplace=True)\n",
+        "data_ratings = pd.read_csv('../content/dataset/Ratings.csv')\n",
+        "data_ratings.fillna(0, inplace=True)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "DjbzZnPadEvE",
+        "outputId": "d8ad72df-0d62-458a-9c1a-9cef1d5592e6"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "<ipython-input-5-eaf1518326a9>:5: DtypeWarning: Columns (3) have mixed types. Specify dtype option on import or set low_memory=False.\n",
+            "  data_books = pd.read_csv('../content/dataset/Books.csv')\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# # Merge books and ratings data on 'isbn'\n",
+        "merged_data = pd.merge(data_books, data_ratings, on='ISBN')\n",
+        "\n",
+        "# # Create a pivot table with book titles and average ratings\n",
+        "# pivot_table = merged_data.pivot_table(index='Book-Title', values='Book-Rating', aggfunc='mean')\n",
+        "# localtunnel@2.0.2\n",
+        "# # Generate the heatmap\n",
+        "# plt.figure(figsize=(10, 8))\n",
+        "# sns.heatmap(pivot_table, annot=True, cmap='coolwarm', linewidths=.5)\n",
+        "# plt.title('Average Ratings of Books')\n",
+        "# plt.xticks(rotation=90)  # Rotate x-axis labels if needed\n",
+        "# plt.show()"
+      ],
+      "metadata": {
+        "id": "d0WZygqFdG80",
+        "collapsed": true
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import tensorflow as tf\n",
+        "from sklearn.model_selection import train_test_split\n",
+        "from sklearn.preprocessing import LabelEncoder\n",
+        "\n",
+        "user_encoder = LabelEncoder()\n",
+        "isbn_encoder = LabelEncoder()\n",
+        "\n",
+        "merged_data['User-ID'] = user_encoder.fit_transform(merged_data['User-ID'])\n",
+        "merged_data['ISBN'] = isbn_encoder.fit_transform(merged_data['ISBN'])\n",
+        "\n",
+        "# Prepare the data for training\n",
+        "X = merged_data[['User-ID', 'ISBN']]\n",
+        "y = merged_data['Book-Rating']\n",
+        "\n",
+        "# Split the data into training and testing sets\n",
+        "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)\n",
+        "\n",
+        "# Build the model\n",
+        "model = tf.keras.Sequential([\n",
+        "    tf.keras.layers.Dense(128, activation='relu'),\n",
+        "    tf.keras.layers.Dense(64, activation='relu'),\n",
+        "    tf.keras.layers.Dense(1)\n",
+        "])\n",
+        "\n",
+        "# Compile the model\n",
+        "model.compile(optimizer='adam', loss='mean_squared_error')\n",
+        "\n",
+        "# Train the model\n",
+        "model.fit(X_train, y_train, epochs=5, validation_data=(X_test, y_test))\n",
+        "\n",
+        "print(\"Model training complete.\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "8TAuPeCglpZX",
+        "outputId": "ecfac764-f1d1-44a1-8c0a-fdb67e496e88"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Epoch 1/5\n",
+            "\u001b[1m25779/25779\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m71s\u001b[0m 3ms/step - loss: 97325.9375 - val_loss: 65.9507\n",
+            "Epoch 2/5\n",
+            "\u001b[1m25779/25779\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m84s\u001b[0m 3ms/step - loss: 368.3198 - val_loss: 16.4754\n",
+            "Epoch 3/5\n",
+            "\u001b[1m25779/25779\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m75s\u001b[0m 3ms/step - loss: 23.3677 - val_loss: 14.8330\n",
+            "Epoch 4/5\n",
+            "\u001b[1m25779/25779\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m83s\u001b[0m 3ms/step - loss: 15.5931 - val_loss: 14.8324\n",
+            "Epoch 5/5\n",
+            "\u001b[1m25779/25779\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m81s\u001b[0m 3ms/step - loss: 14.8585 - val_loss: 14.8328\n",
+            "Model training complete.\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from google.colab import drive\n",
+        "drive.mount('/content/drive')"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "BKDXyUVKoEq_",
+        "outputId": "478dfaf5-348d-4ee9-8676-7d0979162be9"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Mounted at /content/drive\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!sudo apt-get install git"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "cZyuJ2PXpZjG",
+        "outputId": "608cdbd4-c79d-44c1-9d27-df51a5277ed3"
+      },
+      "execution_count": 14,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "shell-init: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory\n",
+            "Reading package lists... Done\n",
+            "Building dependency tree... Done\n",
+            "Reading state information... Done\n",
+            "git is already the newest version (1:2.34.1-1ubuntu1.11).\n",
+            "0 upgraded, 0 newly installed, 0 to remove and 49 not upgraded.\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!git clone https://github.com/mgurrie/BookRecSys.git\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "-vkRPBJOpf1_",
+        "outputId": "36499454-0079-4f83-be29-138c8d12793f"
+      },
+      "execution_count": 15,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "shell-init: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory\n",
+            "fatal: could not create work tree dir 'BookRecSys': No such file or directory\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "aet_bdisrsBJ"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!git config --global user.name \"mgurrie\"\n",
+        "!git config --global user.email \"mgurrie@clemson.edu\"\n"
+      ],
+      "metadata": {
+        "id": "MUbF4itgprcg"
+      },
+      "execution_count": 21,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "\n",
+        "!git push -u origin main\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "keZC0CVEsFCU",
+        "outputId": "0b0ea5cd-00ed-4f25-acae-e10063185b8a"
+      },
+      "execution_count": 22,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "fatal: could not read Username for 'https://github.com': No such device or address\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import streamlit as st\n",
+        "\n",
+        "# Define a function to get recommendations for a given user ID\n",
+        "def get_recommendations(user_id):\n",
+        "    # Encode the user ID\n",
+        "    encoded_user_id = user_encoder.transform([user_id])[0]\n",
+        "\n",
+        "    # Create a DataFrame with all possible ISBNs for the given user ID\n",
+        "    all_isbns = merged_data['ISBN'].unique()\n",
+        "    user_isbns = pd.DataFrame({'User-ID': [encoded_user_id] * len(all_isbns), 'ISBN': all_isbns})\n",
+        "\n",
+        "    # Predict ratings for all books for the given user ID\n",
+        "    predicted_ratings = model.predict(user_isbns)\n",
+        "\n",
+        "    # Add predicted ratings to the DataFrame\n",
+        "    user_isbns['predicted_rating'] = predicted_ratings\n",
+        "\n",
+        "    # Merge with book titles\n",
+        "    recommendations = pd.merge(user_isbns, data_books[['ISBN', 'Book-Title']], on='ISBN')\n",
+        "\n",
+        "    # Sort by predicted rating in descending order and return top 10 recommendations\n",
+        "    top_recommendations = recommendations.sort_values(by='predicted_rating', ascending=False).head(10)\n",
+        "\n",
+        "    return top_recommendations[['Book-Title', 'predicted_rating']]\n",
+        "\n",
+        "# Streamlit front end\n",
+        "st.title('Book Recommendation System')\n",
+        "user_id_input = st.number_input('Enter User ID', min_value=0, step=1)\n",
+        "if st.button('Get Recommendations'):\n",
+        "    recommendations = get_recommendations(user_id_input)\n",
+        "    st.write(recommendations)\n",
+        "\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "BzPOnHiIeRMp",
+        "outputId": "4b85e4f8-44f6-40b2-b3a4-959f455fea3f"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "2024-12-10 22:05:24.211 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2024-12-10 22:05:24.397 \n",
+            "  \u001b[33m\u001b[1mWarning:\u001b[0m to view this Streamlit app on a browser, run it with the following\n",
+            "  command:\n",
+            "\n",
+            "    streamlit run /usr/local/lib/python3.10/dist-packages/colab_kernel_launcher.py [ARGUMENTS]\n",
+            "2024-12-10 22:05:24.399 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2024-12-10 22:05:24.404 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2024-12-10 22:05:24.409 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2024-12-10 22:05:24.413 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2024-12-10 22:05:24.417 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2024-12-10 22:05:24.421 Session state does not function when running a script without `streamlit run`\n",
+            "2024-12-10 22:05:24.424 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2024-12-10 22:05:24.427 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2024-12-10 22:05:24.430 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2024-12-10 22:05:24.432 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2024-12-10 22:05:24.433 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2024-12-10 22:05:24.435 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2024-12-10 22:05:24.436 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# import logging\n",
+        "# import streamlit as st\n",
+        "\n",
+        "# logging.basicConfig(level=logging.DEBUG)\n",
+        "\n",
+        "# st.title('Book Recommendation System')\n",
+        "# user_id_input = st.number_input('Enter User ID', min_value=0, step=1)\n",
+        "# if st.button('Get Recommendations'):\n",
+        "#     try:\n",
+        "#         recommendations = get_recommendations(user_id_input)\n",
+        "#         st.write(recommendations)\n",
+        "#     except Exception as e:\n",
+        "#         logging.error(f\"Error getting recommendations: {e}\")\n",
+        "#         st.error(f\"Error getting recommendations: {e}\")"
+      ],
+      "metadata": {
+        "id": "3NfAIWEUeZu9",
+        "collapsed": true
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# from pyngrok import ngrok\n",
+        "\n",
+        "# # Set your ngrok authtoken\n",
+        "# ngrok.set_auth_token(\"\")\n",
+        "\n",
+        "# !ngrok http 8501 --log=stdout &"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "kWOfWIc-Xs-E",
+        "outputId": "c8c5c967-40f9-419d-849a-70bc55fa2ebd"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\u001b[32mINFO\u001b[0m[12-10|22:05:34] no configuration paths supplied \n",
+            "\u001b[32mINFO\u001b[0m[12-10|22:05:34] using configuration at default config path \u001b[32mpath\u001b[0m=/root/.config/ngrok/ngrok.yml\n",
+            "\u001b[32mINFO\u001b[0m[12-10|22:05:34] open config file                         \u001b[32mpath\u001b[0m=/root/.config/ngrok/ngrok.yml \u001b[32merr\u001b[0m=nil\n",
+            "t=2024-12-10T22:05:34+0000 lvl=info msg=\"starting web service\" obj=web addr=127.0.0.1:4040 allow_hosts=[]\n",
+            "t=2024-12-10T22:05:34+0000 lvl=info msg=\"client session established\" obj=tunnels.session\n",
+            "t=2024-12-10T22:05:34+0000 lvl=info msg=\"tunnel session started\" obj=tunnels.session\n",
+            "t=2024-12-10T22:05:34+0000 lvl=info msg=\"started tunnel\" obj=tunnels name=command_line addr=http://localhost:8501 url=https://85b6-34-70-29-153.ngrok-free.app\n",
+            "t=2024-12-10T22:06:55+0000 lvl=info msg=\"received stop request\" obj=app stopReq=\"{err:<nil> restart:false}\"\n",
+            "t=2024-12-10T22:06:55+0000 lvl=info msg=\"session closing\" obj=tunnels.session err=nil\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# # Start the Streamlit app\n",
+        "# !streamlit run app.py\n",
+        "\n",
+        "# import requests\n",
+        "\n",
+        "# # Get the public URL from ngrok API\n",
+        "# response = requests.get('http://localhost:4040/api/tunnels')\n",
+        "# public_url = response.json()['tunnels'][0]['public_url']\n",
+        "# print(f\"Streamlit app is live at {public_url}\")"
+      ],
+      "metadata": {
+        "id": "-aNTbrzxgSML"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# !streamlit run app.py & npx localtunnel --port 8501 --subdomain bookrecsys"
+      ],
+      "metadata": {
+        "collapsed": true,
+        "id": "gvX5yBup5Agt"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# !curl https://loca.lt/mytunnelpassword"
+      ],
+      "metadata": {
+        "id": "_CJ0Bf0U_245"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
